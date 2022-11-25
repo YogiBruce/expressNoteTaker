@@ -1,5 +1,5 @@
 {
-    "name": "Express Note Taker",
+    "name": "express-note-taker",
     "version": "1.0.0",
     "description": "",
     "main": "server.js",
@@ -10,6 +10,8 @@
     "license": "MIT",
     "dependencies": {
         "bootstrap": "^5.2.3",
-        "express": "^4.16.4"
+        "express": "^4.16.4",
+        "start": "^5.1.0",
+        "uuid": "^9.0.0"
     }
 }
