@@ -2,6 +2,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require('fs');
+const api = require('./routes/index')
 
 //Set port
 const PORT = process.env.PORT || 3001;
@@ -14,68 +15,52 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-
-//Request data
-const { notes } = require('./data/db/json')
-
-app.get('/api/notes', (req, res) => {
-  res.json(notes);
-})
-
-//Create new note
-function createNewNote (body, notesArray) {
-  const note = body;
-  notesArray.push(note)
-
-  //Write file
-  fs.writeFileSync(
-    path.join(__dirname, './data/db.json'),
-    JSON.stringify({ notes: notesArray }, null, 2)
-  )
-
-  return note;
-};
-
-//Validate data
-function validateNote (note) {
-  if (!note.title || typeof note.text !== "string") {
-    return false;
-  }
-  if (!note.text || typeof note.text !== "string") {
-    return false;
-  }
-  return true
-}
+app.use('/api', api)
 
 //POST route
 app.post('/api/notes', (req, res) => {
-  req.body.id = notes.length.toString();
+  const { title, text } = req.body;
 
-  if (!validateNote(req.body)) {
-    res.status(400).send('Note is incorrect format')
+  if (title && text) {
+    const newNote = {
+      title,
+      text,
+      id: uuid(),
+    };
+
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err)
+      } else {
+        const parsedNotes = JSON.parse(data);
+
+        parsedNotes.push(newNote);
+
+        fs.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNotes, null, 4),
+          (writeErr) =>
+            writeErr
+            ? console.error(writeErr)
+            : console.info('Note posted successfully')
+        )
+      }
+    })
+
+    const response = {
+      status: 'success',
+      body: newNote
+    };
+
+    console.log(response);
+    res.status(201).json(response)
   } else {
-    const note = createNewNote(req.body, notes);
-
-    res.json(note);
+    res.status(500).json('Error in posting note')
   }
 });
 
-//DELETE notes
-app.delete('/api', (req, res) => {
-  const id = req.params.id;
-  let note
-
-  notes.map((element, index) => {
-    if (element.id == id) {
-      note = element
-      notes.splice(index, 1)
-      return res.json(note);
-    }
-  })
-});
-
 //Route to index
-app.get('/', (req, res) => 
+app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html')
     ));
 
