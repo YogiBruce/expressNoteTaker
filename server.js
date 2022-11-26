@@ -61,7 +61,7 @@ app.post('/api/notes', (req, res) => {
 
 //Route to index
 app.get('*', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/index.html')
+    res.sendFile(path.join(__dirname, './public/index.html')
     ));
 
 //Route to notes

@@ -3,7 +3,9 @@ const {
     readFromFile,
     readAndAppend,
     readAndDelete
-} = require('../helpers/uuid');
+} = require('../helpers/fsUtils');
+
+const uuid = require('../helpers/uuid')
 
 //GET
 notes.get('/', (req, res) => {
@@ -30,11 +32,10 @@ notes.post('/', (req, res) => {
     } else {
         res.json('Error in posting note')
     }
-})
+});
 
 //DELETE
 notes.delete('/:id', (req, res) => {
-    console.info(`${req.metho} request received to delete note`);
     const id = req.params.id;
     if (id) {
         readAndDelete(id, '.db/db.json')
