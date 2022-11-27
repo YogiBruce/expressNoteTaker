@@ -59,15 +59,20 @@ app.post('/api/notes', (req, res) => {
   }
 });
 
+
 //Route to index
-app.get('*', (req, res) => 
-    res.sendFile(path.join(__dirname, './public/index.html')
-    ));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/notes.html'))
+});
+
 
 //Route to notes
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, './public/notes.html'))
-})
+});
+
+
+
 
 //Listen for server connection
 app.listen(PORT, () => {
